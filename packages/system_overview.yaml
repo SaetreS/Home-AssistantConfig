@@ -21,6 +21,7 @@ group:
       - group.internet_status
       - group.system
       - group.home_assistant
+      - group.pihole
 
   Internet Status:
     - sensor.speedtest_ping

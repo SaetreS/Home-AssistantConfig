@@ -10,12 +10,13 @@ homeassistant:
   packages:
     pack_1: !include packages/system_overview.yaml
     pack_2: !include packages/weather.yaml
+    pack_3: !include packages/pihole.yaml
 
 frontend:
 config:
 http:
 updater:
-#discovery:
+discovery:
 history:
 logbook:
 map:
@@ -23,6 +24,18 @@ sun:
 
 #sensor: !include_dir_merge_list sensors
 
+sensor:
+  - platform: plex
+
 group: !include groups.yaml
-automation: !include_dir_list automations
+#automation: !include_dir_list automations
 #script: !include_dir_merge_list scripts
+
+media_player:
+  - platform: plex
+    entity_namespace: 'plex'
+    include_non_clients: true
+    scan_interval: 5
+    show_all_controls: false
+    use_custom_entity_ids: true
+    use_episode_art: true

@@ -1,0 +1,66 @@
+# after disabling pihole dns cache needs to be cleared
+# open cmd as admin and run
+# ipconfig /flushdns
+# ref link
+# https://community.home-assistant.io/t/pi-hole-switch/22004
+#
+#
+# to find auth code
+# login to pihole
+# settings
+# under API press show API token then yes, show API token
+
+
+homeassistant:
+  customize:
+    sensor.pihole_ads_percentage_today:
+      friendly_name: Percentage of Ad Traffic Blocked
+      unit_of_measurement: '%'
+      icon: mdi:ticket-percent
+
+    sensor.pihole_domains_being_blocked:
+      friendly_name: Total Domains Blocking
+      icon: mdi:do-not-disturb
+
+    sensor.pihole_dns_unique_clients:
+      friendly_name: Unique Clients
+      icon: mdi:desktop-classic
+
+    sensor.pihole_ads_blocked_today:
+      friendly_name: Ads Blocked Today
+      icon: mdi:do-not-disturb
+
+    sensor.pihole_dns_queries_today:
+      friendly_name: DNS Queries Today
+      icon: mdi:note-text
+
+#    group.pihole:
+#      homebridge_hidden: true
+
+sensor:
+  - platform: pi_hole
+    host: 192.168.1.2
+    monitored_conditions:
+      - dns_queries_today
+      - ads_blocked_today
+      - ads_percentage_today
+      - unique_clients
+
+switch:
+  - platform: command_line
+    switches:
+      disable_pihole:
+        command_on: !secret pihole_disable_on
+        command_off: !secret pihole_disable_off
+#        command_state: !secret pihole_state
+#        value_template: "{{ value_json.status == 'enabled' }}
+
+group:
+  pihole:
+    entities:
+      - sensor.pihole_dns_unique_clients
+      - sensor.pihole_dns_queries_today
+      - sensor.pihole_ads_blocked_today
+      - sensor.pihole_ads_percentage_today
+      - sensor.pihole_ads_percentage_blocked_today
+      - switch.disable_pihole

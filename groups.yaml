@@ -2,6 +2,5 @@ default_view:
   name: Home
   icon: mdi:home-assistant
   view: yes
-#  entities:
-#    - script.restart_pi
-#    - script.restart_ha
+  entities:
+#    - group.pihole
