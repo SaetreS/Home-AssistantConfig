@@ -1,5 +1,3 @@
-# Home-AssistantConfig
-
 |tests_img|
 
 Description
