@@ -1,0 +1,118 @@
+# procedure to restart pi from home assistant
+# sudo su -s /bin/bash homeassistant
+# ssh-keygen --> enter
+# ssh-copy-id pi@192.168.1.156
+#
+# the following needs to be in added to configuration.yaml
+# shell_command:
+#   rebootpi: ssh pi@192.168.1.156 sudo reboot
+#
+# ref links:
+# https://github.com/samabsalom/Home-Assistant-Config/blob/master/packages/rebootpi.yaml
+# https://community.home-assistant.io/t/reboot-pi-with-script/5130/20
+
+
+group:
+  system_overview:
+    name: System
+    icon: mdi:server-network
+    view: yes
+    entities:
+      - group.internet_status
+      - group.system
+      - group.home_assistant
+
+  Internet Status:
+    - sensor.speedtest_ping
+    - sensor.speedtest_download
+    - sensor.speedtest_upload
+
+  System:
+    - sensor.pi_temperature
+    - sensor.cpu_used
+    - sensor.disk_used_home
+    - sensor.ram_available
+    - sensor.received_eth0
+    - sensor.sent_eth0
+    - sensor.last_boot
+    - sensor.ipv4_address_eth0
+    - script.restart_pi
+    - script.restart_ha
+
+  Home Assistant:
+    - sensor.home_assistant_installed_version
+    - sensor.home_assistant_uptime
+
+sensor:
+  - platform: systemmonitor
+    resources:
+      - type: disk_use_percent
+        arg: /home
+      - type: memory_free
+      - type: processor_use
+      - type: network_in
+        arg: eth0
+      - type: network_out
+        arg: eth0
+      - type: last_boot
+      - type: disk_free
+      - type: ipv4_address
+        arg: eth0
+
+  - platform: command_line
+    command: "cat /sys/class/thermal/thermal_zone0/temp"
+    unit_of_measurement: "°C"
+    value_template: '{{ value | multiply(0.001) | round(2) }}'
+    name: "Pi temperature"
+
+  - platform: speedtest
+    monitored_conditions:
+      - ping
+      - download
+      - upload
+
+  - platform: command_line
+    name: Home Assistant Installed Version
+    command: >-
+        cat /home/homeassistant/.homeassistant/.HA_VERSION
+    scan_interval: 86400
+
+  - platform: command_line
+    name: "Home Assistant Uptime"
+    command: echo "$(($(date +%s) - $(date -d "$(head -n1 /home/homeassistant/.homeassistant/home-assistant.log | cut -d' ' -f-2)" +%s)))"
+    scan_interval: 720
+    value_template: >-
+      {% set uptime = value | int %}
+      {% set seconds = uptime % 60 %}
+      {% set minutes = ((uptime % 3600) / 60) | int %}
+      {% set hours = ((uptime % 86400) / 3600) | int %}
+      {% set days = (uptime / 86400) | int %}
+      {%- if days > 0 -%}
+        {%- if days == 1 -%}
+          1 day
+        {%- else -%}
+          {{ days }} days
+        {%- endif -%}
+        {{ ', ' }}
+      {%- endif -%}
+      {{ '%02d' % hours }}:{{ '%02d' % minutes }}
+
+script:
+  restart_ha:
+    alias: Restart Home Assistant
+    sequence:
+      - service: shell_command.rebootha
+        entity_id: script.restart_ha
+
+  restart_pi:
+    alias: Restart Pi
+    sequence:
+      - service: shell_command.stopha
+      - service: shell_command.rebootpi
+        entity_id: script.restart_pi
+
+shell_command:
+  rebootpi: ssh pi@192.168.1.156 sudo reboot
+  rebootha: ssh pi@192.168.1.156 sudo systemctl restart home-assistant
+  stopha: ssh pi@192.168.1.156 sudo systemctl stop home-assistant
+
