@@ -10,6 +10,7 @@ hass --script check_config -c /home/homeassistant/.homeassistant/
 
 git add .
 git status
+git pull
 echo -n "Enter the description for the change: " [minor update]
 read CHANGE_MSG
 git commit -m "${CHANGE_MSG}"
