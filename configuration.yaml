@@ -1,4 +1,3 @@
-#test
 homeassistant:
   name: Home
   latitude: !secret lat

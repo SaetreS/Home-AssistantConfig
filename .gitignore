@@ -6,3 +6,4 @@ secrets.yaml
 known_devices.yaml
 !gitupdate.sh
 !.travis.yml
+!update_pi.sh
