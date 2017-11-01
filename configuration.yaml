@@ -11,6 +11,7 @@ homeassistant:
     pack_1: !include packages/system_overview.yaml
     pack_2: !include packages/weather.yaml
     pack_3: !include packages/pihole.yaml
+    pack_4: !include packages/windy.yaml
 
 frontend:
 config:

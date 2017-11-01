@@ -1,0 +1,5 @@
+panel_iframe:
+  windy:
+    title: "Windy"
+    url: !secret windy_url
+    icon: mdi:weather-windy
