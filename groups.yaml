@@ -4,3 +4,4 @@ default_view:
   view: yes
   entities:
 #    - group.pihole
+    - group.dht_stue

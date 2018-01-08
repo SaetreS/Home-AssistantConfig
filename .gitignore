@@ -7,3 +7,6 @@ known_devices.yaml
 !gitupdate.sh
 !.travis.yml
 !update_pi.sh
+groups.yaml
+yr_location_comparison.py
+!scripts

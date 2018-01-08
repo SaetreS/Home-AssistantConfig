@@ -1,0 +1,103 @@
+group:
+  default_view:
+    view: yes
+    icon: mdi:home
+    entities:
+      - group.temperaturer
+      - group.batteri
+      - group.brannalarm
+      - group.alarm
+
+  temperaturer:
+    name: Temperatur
+    entities:
+      - sensor.dht_sensor_temperature
+#    - sensor.dht_sensor_humidity
+#    - sensor.temperature
+#    - sensor.humidity
+      - sensor.fibaro_system_fgsd002_smoke_sensor_temperature
+
+  batteri:
+    name: Batteri status
+    entities:
+      - sensor.zwave_batteri_brannalarm
+      - sensor.iphone_stian_battery_level
+
+  brannalarm:
+    name: Brannalarm
+    entities:
+      - sensor.fibaro_system_fgsd002_smoke_sensor_alarm_level
+      - sensor.fibaro_system_fgsd002_smoke_sensor_alarm_type
+      - sensor.fibaro_system_fgsd002_smoke_sensor_burglar
+      - sensor.fibaro_system_fgsd002_smoke_sensor_general
+      - sensor.fibaro_system_fgsd002_smoke_sensor_heat
+      - sensor.fibaro_system_fgsd002_smoke_sensor_heat_2
+      - sensor.fibaro_system_fgsd002_smoke_sensor_power_management
+      - sensor.fibaro_system_fgsd002_smoke_sensor_smoke
+      - sensor.fibaro_system_fgsd002_smoke_sensor_smoke_2
+      - sensor.fibaro_system_fgsd002_smoke_sensor_sourcenodeid
+      - sensor.fibaro_system_fgsd002_smoke_sensor_system
+ 
+  alarm:
+    name: Alarms
+    entities:
+      - automation.brannalarm
+      - automation.mining
+
+sensor:
+#  platform: dht
+#  sensor: DHT22
+#  pin: 23
+#  monitored_conditions:
+#    - temperature
+#    - humidity
+
+  - platform: dht
+    sensor: DHT22
+    pin: 23
+    monitored_conditions:
+      - temperature
+      - humidity
+
+  - platform: template
+    sensors:
+      zwave_batteri_brannalarm:
+        value_template: '{{ states.zwave.fibaro_system_fgsd002_smoke_sensor.attributes.battery_level|default(0) }}'
+        icon_template: >
+          {% set battery_level = states.zwave.garage_car.attributes.battery_level | default(0) | int %}
+          {% set battery_round = (battery_level / 10) |int * 10 %}
+          {% if battery_round >= 100 %}
+            mdi:battery
+          {% elif battery_round > 0 %}
+            mdi:battery-{{ battery_round }}
+          {% else %}
+            mdi:battery-alert
+          {% endif %}
+
+homeassistant:
+    customize:
+      sensor.fibaro_system_fgsd002_smoke_sensor_temperature:
+        friendly_name: Brannalarm
+#        icon: mdi code....
+        unit_of_measurement: °C
+      sensor.zwave_batteri_brannalarm:
+        friendly_name: Brannalarm
+      sensor.iphone_stian_battery_level:
+        friendly_name: Iphone
+        
+automation:
+  - alias: Brannalarm
+    trigger:
+      platform: numeric_state
+      entity_id:
+        - sensor.fibaro_system_fgsd002_smoke_sensor_smoke_2
+        - sensor.fibaro_system_fgsd002_smoke_sensor_smoke
+      above: 0
+    action:
+      service: notify.ALARM_LIST
+      data:
+        message: "Alarm - brannalarm"
+        data:
+          push:
+            badge: 5
+            category: 'alarm'

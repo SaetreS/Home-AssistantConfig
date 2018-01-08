@@ -6,16 +6,18 @@ homeassistant:
   unit_system: metric
   time_zone: !secret timezone
 
-  customize: !include customize.yaml
-  packages:
-    pack_1: !include packages/system_overview.yaml
-    pack_2: !include packages/weather.yaml
-    pack_3: !include packages/pihole.yaml
-    pack_4: !include packages/windy.yaml
+#  customize: !include customize.yaml
+  packages: !include_dir_named packages
+#    pack_1: !include packages/system_overview.yaml
+#    pack_2: !include packages/weather.yaml
+#    pack_3: !include packages/pihole.yaml
+#    pack_4: !include packages/windy.yaml
+#    pack_5: !include packages/front_page.yaml
 
 frontend:
 config:
 http:
+  api_password: !secret http_password
 updater:
 discovery:
 history:
@@ -23,12 +25,38 @@ logbook:
 map:
 sun:
 
+#mqtt:
+#  broker: 192.168.1.156
+#  port: 1883
+#  client_id: home-assistant-1
+#  keepalive: 60
+#  username: !secret mqtt_username
+#  password: !secret mqtt_password
+
 #sensor: !include_dir_merge_list sensors
+
+zwave:
+  usb_path: /dev/ttyAMA0
+  config_path: /srv/homeassistant/homeassistant_venv/lib/python3.5/site-packages/libopenzwave-0.3.3-py3.5-linux-armv7l.egg/config
 
 sensor:
   - platform: plex
 
-group: !include groups.yaml
+#sensor 1:
+#  platform: mqtt
+#  name: "Temperature"
+#  state_topic: "sensor/temperature"
+#  qos: 0
+#  unit_of_measurement: "ºC"
+
+#sensor 2:
+#  platform: mqtt
+#  name: "Humidity"
+#  state_topic: "sensor/humidity"
+#  qos: 0
+#  unit_of_measurement: "%"  
+
+#group: !include groups.yaml
 #automation: !include_dir_list automations
 #script: !include_dir_merge_list scripts
 
@@ -40,3 +68,30 @@ media_player:
     show_all_controls: false
     use_custom_entity_ids: true
     use_episode_art: true
+
+ios:
+  push:
+    categories:
+      - name: ALARM
+        identifier: 'alarm'
+        actions:
+          - identifier: 'sound_alarm'
+            title: 'ALARM'
+            activationMode: 'background'
+            destructive: yes
+            behavior: 'default'
+          - identifier: 'silence_alarm'
+            title: 'Silence Alarm'
+            activationMode: 'background'
+            authenticationRequired: yes
+            destructive: no
+            behavior: 'textInput'
+            textInputButtonTitle: 'Silence!'
+            textInputPlaceholder: 'Placeholder'
+
+notify:
+  - name: ALARM_LIST
+    platform: group
+    services:
+      - service: !secret phone_SS
+#      - service: !secret ipad_SS

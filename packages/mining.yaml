@@ -1,0 +1,37 @@
+group:
+  mining:
+    name: Mining
+    icon: mdi:shovel
+    view: yes
+    entities:
+      - group.Zcash
+
+  Zcash:
+    - sensor.zec_hashrate
+
+sensor:
+  - platform: command_line
+    name: zec Hashrate
+    command: !secret zec_hashrate
+ 
+homeassistant:
+    customize:
+      sensor.zec_hashrate:
+        friendly_name: Hashrate
+        unit_of_measurement: H/s
+
+automation:
+  - alias: Mining
+    trigger:
+      platform: numeric_state
+      entity_id:
+        - sensor.zec_hashrate
+      below: 1
+    action:
+      service: notify.ALARM_LIST
+      data:
+        message: "Alarm - Mining stop"
+        data:
+          push:
+            badge: 5
+            category: 'alarm'        
