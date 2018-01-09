@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 
+"""
+https://home-assistant.io/components/sensor.command_line/
+"""
+
 #import urllib2
 import json
 #import numpy as np
@@ -23,11 +27,12 @@ class NanoPool:
 
     def get_avg_hashrate(self):
         url = self.__get_miner_url('avghashrate')
-        return self.__get_data(url)
+        data = self.__get_data(url)
+        return round(data['h6'], 1)
 
     def get_current_hashrate(self):
         url = self.__get_miner_url('hashrate')
-        return self.__get_data(url)
+        return round(self.__get_data(url), 1)
     
     def get_general_info(self):
         url = self.__get_miner_url('user')
@@ -37,13 +42,14 @@ class NanoPool:
         url = self.__get_miner_url('history')
         return self.__get_data(url)
 
-    def get_aprox_earnings(self, hashrate):
+    def get_aprox_earnings(self):
+        hashrate = self.get_avg_hashrate()
         url = '/'.join([self.base_url, 'approximated_earnings', str(hashrate)])
-        return self.__get_data(url)
+        return round(self.__get_data(url)['month']['coins'], 2)
 
     def get_coin_prices(self):
         url = '/'.join([self.base_url, 'prices'])
-        return self.__get_data(url)
+        return round(self.__get_data(url)['price_usd'], 2)
 
     def __get_data(self, url):
         

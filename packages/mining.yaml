@@ -5,20 +5,68 @@ group:
     view: yes
     entities:
       - group.Zcash
+      - group.zcash_mining
 
   Zcash:
     - sensor.zec_hashrate
+    - sensor.zec_avg_hashrate
+    - sensor.zec_earnings
+    - sensor.zec_coin_value
 
+  Zcash mining:
+    - history_graph.zcash_hashrate
+    - history_graph.zcash_monthly_earning_estimates
+    
 sensor:
   - platform: command_line
     name: zec Hashrate
     command: !secret zec_hashrate
- 
+
+  - platform: command_line
+    name: zec avg hashrate
+    command: !secret zec_avg_hashrate
+  
+  - platform: command_line
+    name: zec earnings
+    command: !secret zec_earnings
+
+  - platform: command_line
+    name: zec coin value
+    command: !secret zec_coin_value
+
+
+history_graph:
+  gr4:
+    name: Zcash Hashrate
+    entities:
+      - sensor.zec_hashrate
+      - sensor.zec_avg_hashrate
+    hours_to_show: 720
+    refresh: 300
+
+  gr5:
+    name: Zcash Monthly earning estimates
+    entities:
+      - sensor.zec_earnings
+    hours_to_show: 720
+    refresh: 300
+
+
+    
 homeassistant:
     customize:
       sensor.zec_hashrate:
         friendly_name: Hashrate
         unit_of_measurement: H/s
+      sensor.zec_avg_hashrate:
+        friendly_name: 6h avg Hashrate
+        unit_of_measurement: H/s
+      sensor.zec_earnings:
+        friendly_name: Earning estimate
+        unit_of_measurement: coin/month
+      sensor.zec_coin_value:
+        friendly_name: Zec Value
+        unit_of_measurement: USD        
 
 automation:
   - alias: Mining
