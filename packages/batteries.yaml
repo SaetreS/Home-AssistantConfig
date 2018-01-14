@@ -4,7 +4,7 @@ sensor:
       zwave_batteri_brannalarm:
         value_template: '{{ states.zwave.fibaro_system_fgsd002_smoke_sensor.attributes.battery_level|default(0) }}'
         icon_template: >
-          {% set battery_level = states.zwave.garage_car.attributes.battery_level | default(0) | int %}
+          {% set battery_level = states.zwave.fibaro_system_fgsd002_smoke_sensor.battery_level | default(0) | int %}
           {% set battery_round = (battery_level / 10) |int * 10 %}
           {% if battery_round >= 100 %}
             mdi:battery

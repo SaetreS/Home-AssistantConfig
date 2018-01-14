@@ -51,6 +51,30 @@ class NanoPool:
         url = '/'.join([self.base_url, 'prices'])
         return round(self.__get_data(url)['price_usd'], 2)
 
+    def get_difficulty(self):
+        offset = 0
+        blocks = 1
+        url = '/'.join([self.base_url, 'block_stats', str(offset), str(blocks)])
+        return self.__get_data(url)[0]['difficulty'] / 10**6
+
+    def get_time_until_payment(self, payment_limit=0.01):
+        balance = self.get_balance()
+        hourly_earning_rate = self.get_aprox_earnings() / 720
+        hours_until_payment = (payment_limit - balance) / hourly_earning_rate
+        if hours_until_payment < 0:
+            return 0
+        else:
+            return round(hours_until_payment, 1)
+    
+    def get_total_payout(self):
+        url = self.__get_miner_url('payments')
+        payments = self.__get_data(url)
+        total_payout = 0
+        for payment in payments:
+            total_payout += payment['amount']
+        
+        return round(total_payout, 4)
+
     def __get_data(self, url):
         
         header = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36'}
@@ -80,7 +104,10 @@ if __name__ == '__main__':
                     'general_info',
                     'history',
                     'aprox_earnings',
-                    'coin_prices']
+                    'coin_prices',
+                    'difficulty',
+                    'time_until_payment',
+                    'total_payout']
     
     parser = argparse.ArgumentParser()
     parser.add_argument('command', choices=FUNCTION_MAP)

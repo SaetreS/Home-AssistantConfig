@@ -6,37 +6,135 @@ group:
     entities:
       - group.Zcash
       - group.zcash_mining
+      - group.aeon
+      - group.aeon_mining
 
   Zcash:
     - sensor.zec_hashrate
     - sensor.zec_avg_hashrate
+    - sensor.zec_pool_balance
+    - sensor.zec_time_until_payment
+    - sensor.zec_total_payout
+    - sensor.zec_total_payout_usd
     - sensor.zec_earnings
+    - sensor.zec_earning_usd
     - sensor.zec_coin_value
-
+  
   Zcash mining:
     - history_graph.zcash_hashrate
     - history_graph.zcash_monthly_earning_estimates
+    - history_graph.zcash_network_difficulty
+
+  Aeon:
+    - sensor.aeon_hashrate
+    - sensor.aeon_avg_hashrate
+    - sensor.aeon_pool_balance
+    - sensor.aeon_time_until_payment
+    - sensor.aeon_total_payout
+    - sensor.aeon_total_payout_usd
+    - sensor.aeon_earnings
+    - sensor.aeon_earning_usd
+    - sensor.aeon_coin_value
+
+  Aeon mining:
+    - history_graph.aeon_hashrate
+    - history_graph.aeon_monthly_earning_estimates
+    - history_graph.aeon_network_difficulty
     
 sensor:
   - platform: command_line
     name: zec Hashrate
     command: !secret zec_hashrate
+    scan_interval: 300
 
   - platform: command_line
     name: zec avg hashrate
     command: !secret zec_avg_hashrate
-  
+    scan_interval: 300
+    
   - platform: command_line
     name: zec earnings
     command: !secret zec_earnings
-
+    scan_interval: 300
+    
   - platform: command_line
     name: zec coin value
     command: !secret zec_coin_value
-
-
+    scan_interval: 300
+    
+  - platform: command_line
+    name: zec network difficulty
+    command: !secret zec_difficulty
+    scan_interval: 300
+    
+  - platform: command_line
+    name: zec time until payment
+    command: !secret zec_time_until_payment
+    scan_interval: 300
+    
+  - platform: command_line
+    name: zec pool balance
+    command: !secret zec_balance
+    scan_interval: 300
+    
+  - platform: command_line
+    name: zec total payout
+    command: !secret zec_total_payout
+    scan_interval: 300        
+        
+  - platform: command_line
+    name: aeon Hashrate
+    command: !secret aeon_hashrate
+    scan_interval: 300
+    
+  - platform: command_line
+    name: aeon avg hashrate
+    command: !secret aeon_avg_hashrate
+    scan_interval: 300
+    
+  - platform: command_line
+    name: aeon earnings
+    command: !secret aeon_earnings
+    scan_interval: 300
+    
+  - platform: command_line
+    name: aeon coin value
+    command: !secret aeon_coin_value
+    scan_interval: 300
+    
+  - platform: command_line
+    name: aeon network difficulty
+    command: !secret aeon_difficulty
+    scan_interval: 300
+    
+  - platform: command_line
+    name: aeon time until payment
+    command: !secret aeon_time_until_payment
+    scan_interval: 300
+    
+  - platform: command_line
+    name: aeon pool balance
+    command: !secret aeon_balance
+    scan_interval: 300
+    
+  - platform: command_line
+    name: aeon total payout
+    command: !secret aeon_total_payout    
+    scan_interval: 300
+    
+  - platform: template
+    sensors: 
+      zec_earning_usd:
+        value_template: "{{ float(states.sensor.zec_earnings.state) * float(states.sensor.zec_coin_value.state) | round(1) }}"
+      zec_total_payout_usd:
+        value_template: "{{ float(states.sensor.zec_total_payout.state) * float(states.sensor.zec_coin_value.state) | round(1) }}"
+      aeon_earning_usd:
+        value_template: "{{ float(states.sensor.aeon_earnings.state) * float(states.sensor.aeon_coin_value.state) | round(1) }}"
+      aeon_total_payout_usd:
+        value_template: "{{ float(states.sensor.aeon_total_payout.state) * float(states.sensor.aeon_coin_value.state) | round(1) }}"
+        
 history_graph:
-  gr4:
+  gr7:
     name: Zcash Hashrate
     entities:
       - sensor.zec_hashrate
@@ -44,14 +142,41 @@ history_graph:
     hours_to_show: 720
     refresh: 300
 
-  gr5:
+  gr8:
     name: Zcash Monthly earning estimates
     entities:
       - sensor.zec_earnings
     hours_to_show: 720
     refresh: 300
 
+  gr9:
+    name: Zcash Network Difficulty
+    entities:
+      - sensor.zec_network_difficulty
+    hours_to_show: 720
+    refresh: 300
 
+  gr10:
+    name: Aeon Hashrate
+    entities:
+      - sensor.aeon_hashrate
+      - sensor.aeon_avg_hashrate
+    hours_to_show: 720
+    refresh: 300
+
+  gr11:
+    name: Aeon Monthly earning estimates
+    entities:
+      - sensor.aeon_earnings
+    hours_to_show: 720
+    refresh: 300
+
+  gr12:
+    name: Aeon Network Difficulty
+    entities:
+      - sensor.aeon_network_difficulty
+    hours_to_show: 720
+    refresh: 300
     
 homeassistant:
     customize:
@@ -67,19 +192,88 @@ homeassistant:
       sensor.zec_coin_value:
         friendly_name: Zec Value
         unit_of_measurement: USD        
+      sensor.zec_network_difficulty:
+        friendly_name: Zec network difficulty
+        unit_of_measurement: Difficulty [M]
+      sensor.zec_earning_usd:
+        friendly_name: earning estimate USD
+        unit_of_measurement: USD/month
+      sensor.zec_pool_balance:
+        friendly_name: Balance at pool
+        unit_of_measurement: zec
+      sensor.zec_time_until_payment:
+        friendly_name: Time until payment
+        unit_of_measurement: hours
+      sensor.zec_total_payout:
+        friendly_name: Total payout
+        unit_of_measurement: zec
+      sensor.zec_total_payout_usd:
+        friendly_name: Total payout USD
+        unit_of_measurement: USD
 
+      sensor.aeon_hashrate:
+        friendly_name: Hashrate
+        unit_of_measurement: H/s
+      sensor.aeon_avg_hashrate:
+        friendly_name: 6h avg Hashrate
+        unit_of_measurement: H/s
+      sensor.aeon_earnings:
+        friendly_name: Earning estimate
+        unit_of_measurement: coin/month
+      sensor.aeon_coin_value:
+        friendly_name: Aeon Value
+        unit_of_measurement: USD        
+      sensor.aeon_network_difficulty:
+        friendly_name: Aeon network difficulty
+        unit_of_measurement: Difficulty [M]
+      sensor.aeon_earning_usd:
+        friendly_name: earning estimate USD
+        unit_of_measurement: USD/month
+      sensor.aeon_pool_balance:
+        friendly_name: Balance at pool
+        unit_of_measurement: Aeon
+      sensor.aeon_time_until_payment:
+        friendly_name: Time until payment
+        unit_of_measurement: hours
+      sensor.aeon_total_payout:
+        friendly_name: Total payout
+        unit_of_measurement: Aeon
+      sensor.aeon_total_payout_usd:
+        friendly_name: Total payout USD
+        unit_of_measurement: USD
+
+        
 automation:
-  - alias: Mining
+  - alias: Zec Mining
     trigger:
       platform: numeric_state
       entity_id:
         - sensor.zec_hashrate
       below: 1
+      for:
+        minutes: 10
     action:
       service: notify.ALARM_LIST
       data:
-        message: "Alarm - Mining stop"
+        message: "Alarm - Mining Zec stop"
         data:
           push:
             badge: 5
-            category: 'alarm'        
+            category: 'alarm'
+
+  - alias: Aeon Mining
+    trigger:
+      platform: numeric_state
+      entity_id:
+        - sensor.aeon_hashrate
+      below: 1
+      for:
+        minutes: 10
+    action:
+      service: notify.ALARM_LIST
+      data:
+        message: "Alarm - Mining Aeon stop"
+        data:
+          push:
+            badge: 5
+            category: 'alarm'                    
