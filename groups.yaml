@@ -1,7 +1,0 @@
-default_view:
-  name: Home
-  icon: mdi:home-assistant
-  view: yes
-  entities:
-#    - group.pihole
-    - group.dht_stue
