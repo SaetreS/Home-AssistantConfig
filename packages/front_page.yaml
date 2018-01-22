@@ -7,6 +7,7 @@ group:
       - group.batteri
       - group.brannalarm
       - group.alarm
+      - group.vacuum
 
   temperaturer:
     name: Temperatur
@@ -22,6 +23,7 @@ group:
     entities:
       - sensor.zwave_batteri_brannalarm
       - sensor.iphone_stian_battery_level
+      - sensor.vacuum_battery
 
   brannalarm:
     name: Brannalarm
@@ -45,14 +47,17 @@ group:
       - automation.zec_mining
       - automation.aeon_mining
 
+  vacuum:
+    name: Stovsuger
+    entities:
+      - vacuum.xiaomi_vacuum_cleaner
+      - automation.Automatisk_stovsuging
+      - sensor.vacuum_status
+      - sensor.vacuum_main_brush_left
+      - sensor.vacuum_side_brush_left
+      - sensor.vacuum_filter_left
+      
 sensor:
-#  platform: dht
-#  sensor: DHT22
-#  pin: 23
-#  monitored_conditions:
-#    - temperature
-#    - humidity
-
   - platform: dht
     sensor: DHT22
     pin: 23
@@ -75,6 +80,35 @@ sensor:
             mdi:battery-alert
           {% endif %}
 
+  - platform: template
+    sensors:
+      vacuum_battery:
+        value_template: '{{ states.vacuum.xiaomi_vacuum_cleaner.attributes.battery_level }}'
+        icon_template: >
+          {% set battery_level = states.vacuum.xiaomi_vacuum_cleaner.attributes.battery_level | default(0) | int %}
+          {% set battery_round = (battery_level / 10) |int * 10 %}
+          {% if battery_round >= 100 %}
+            mdi:battery
+          {% elif battery_round > 0 %}
+            mdi:battery-{{ battery_round }}
+          {% else %}
+            mdi:battery-alert
+          {% endif %}
+      vacuum_status:
+        value_template: '{{ states.vacuum.xiaomi_vacuum_cleaner.attributes.status }}'
+      vacuum_side_brush_left:
+        value_template: '{{ states.vacuum.xiaomi_vacuum_cleaner.attributes.side_brush_left }}'
+      vacuum_main_brush_left:
+        value_template: '{{ states.vacuum.xiaomi_vacuum_cleaner.attributes.main_brush_left }}'
+      vacuum_filter_left:
+        value_template: '{{ states.vacuum.xiaomi_vacuum_cleaner.attributes.filter_left }}'
+        
+vacuum:
+  - platform: xiaomi_miio
+    host: !secret vacuum_host
+    token: !secret vacuum_token
+          
+          
 homeassistant:
     customize:
       sensor.fibaro_system_fgsd002_smoke_sensor_temperature:
@@ -85,6 +119,21 @@ homeassistant:
         friendly_name: Brannalarm
       sensor.iphone_stian_battery_level:
         friendly_name: Iphone
+      sensor.vacuum_battery:
+        friendly_name: Stovsuger
+      sensor.vacuum_status:
+        friendly_name: Status
+      sensor.vacuum_main_brush_left:
+        friendly_name: Hovedborste - tid til bytte
+        unit_of_measurement: h
+      sensor.vacuum_side_brush_left:
+        friendly_name: Sideborste - tid til bytte
+        unit_of_measurement: h
+      sensor.vacuum_filter_left:
+        friendly_name: Filter - tid til bytte
+        unit_of_measurement: h
+
+
         
 automation:
   - alias: Brannalarm
@@ -102,3 +151,24 @@ automation:
           push:
             badge: 5
             category: 'alarm'
+  - alias: Automatisk stovsuging
+    trigger:
+#      - platform: state
+#        entity_id: group.tracker
+#        to: 'not_home'
+#        for:
+#          hours: 1
+      - platform: time
+        at: '13:00:00'
+    condition:
+      condition: time
+      weekday:
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
+    action:
+      - service: homeassistant.turn_on
+        entity_id: vacuum.xiaomi_vacuum_cleaner
+        
