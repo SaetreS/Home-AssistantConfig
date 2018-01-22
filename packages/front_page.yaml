@@ -23,6 +23,7 @@ group:
     entities:
       - sensor.zwave_batteri_brannalarm
       - sensor.iphone_stian_battery_level
+      - sensor.stians_ipad_battery_level
       - sensor.vacuum_battery
 
   brannalarm:
@@ -119,6 +120,8 @@ homeassistant:
         friendly_name: Brannalarm
       sensor.iphone_stian_battery_level:
         friendly_name: Iphone
+      sensor.stians_ipad_battery_level:
+        friendly_name: Ipad
       sensor.vacuum_battery:
         friendly_name: Stovsuger
       sensor.vacuum_status:

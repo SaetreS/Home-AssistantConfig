@@ -81,4 +81,4 @@ notify:
     platform: group
     services:
       - service: !secret phone_SS
-#      - service: !secret ipad_SS
+      - service: !secret ipad_SS
