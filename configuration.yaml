@@ -5,14 +5,7 @@ homeassistant:
   elevation: !secret elev
   unit_system: metric
   time_zone: !secret timezone
-
-#  customize: !include customize.yaml
   packages: !include_dir_named packages
-#    pack_1: !include packages/system_overview.yaml
-#    pack_2: !include packages/weather.yaml
-#    pack_3: !include packages/pihole.yaml
-#    pack_4: !include packages/windy.yaml
-#    pack_5: !include packages/front_page.yaml
 
 frontend:
 config:
@@ -39,26 +32,20 @@ zwave:
   usb_path: /dev/ttyAMA0
   config_path: /srv/homeassistant/homeassistant_venv/lib/python3.5/site-packages/libopenzwave-0.3.3-py3.5-linux-armv7l.egg/config
 
+device_tracker:
+- platform: nmap_tracker
+  hosts: 192.168.1.0/24
+  track_new_devices: yes
+  consider_home: 1800
+  interval_seconds: 60
+  home_interval: 5
+  scan_options: " --privileged -sP "
+  # sudo setcap cap_net_raw,cap_net_admin,cap_net_bind_service+eip /usr/bin/nmap   
+
+
 sensor:
   - platform: plex
 
-#sensor 1:
-#  platform: mqtt
-#  name: "Temperature"
-#  state_topic: "sensor/temperature"
-#  qos: 0
-#  unit_of_measurement: "ºC"
-
-#sensor 2:
-#  platform: mqtt
-#  name: "Humidity"
-#  state_topic: "sensor/humidity"
-#  qos: 0
-#  unit_of_measurement: "%"  
-
-#group: !include groups.yaml
-#automation: !include_dir_list automations
-#script: !include_dir_merge_list scripts
 
 media_player:
   - platform: plex
