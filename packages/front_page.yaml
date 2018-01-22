@@ -156,11 +156,11 @@ automation:
             category: 'alarm'
   - alias: Automatisk stovsuging
     trigger:
-#      - platform: state
-#        entity_id: group.tracker
-#        to: 'not_home'
-#        for:
-#          hours: 1
+      - platform: state
+        entity_id: device_tracker.iphone_stian
+        to: 'not_home'
+        for:
+          hours: 1
       - platform: time
         at: '13:00:00'
     condition:
