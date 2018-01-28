@@ -12,3 +12,4 @@ groups.yaml
 yr_location_comparison.py
 !scripts
 __init__.py
+!update_ha.sh
