@@ -44,7 +44,7 @@ group:
 
   Home Assistant:
     - sensor.home_assistant_installed_version
-    - sensor.home_assistant_current_version
+    - sensor.Home_Assistant_Latest_Version
     - sensor.home_assistant_uptime
 
 sensor:
@@ -122,9 +122,10 @@ sensor:
       {%- endif -%}
       {{ '%02d' % hours }}:{{ '%02d' % minutes }}
 
-  - platform: version
-    name: "Home Assistant Current Version"
-      
+  - platform: command_line
+    command: python3 -c "import requests; print(requests.get('https://pypi.python.org/pypi/homeassistant/json').json()['info']['version'])"
+    name: Home Assistant Latest Version
+    
 script:
   restart_ha:
     alias: Restart Home Assistant
