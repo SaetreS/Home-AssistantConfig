@@ -12,6 +12,7 @@
 #
 #
 # Adding SSH access to pi hole
+#
 # homeassistant ip: 192.168.1.156
 # homeassistant user: homeassistant
 # pihole ip: 192.168.1.2
@@ -21,11 +22,17 @@
 # ssh-keygen -t rsa
 # /home/homeassistant/.ssh/__UNIQUE_NAME__                                           # if multiple ssh points is needed add unique name else enter
 # enter                                                                              # no password eases the HA connecting part
-# ssh pi@192.168.1.2 mkdir -p .ssh                                                   # login to the host ip address to create an .ssh folder to store the private key in
+# ssh pi@192.168.1.2 mkdir -p .ssh                                                   # login to the host ip address to create an .ssh folder to store the public key in
 # cat .ssh/__UNIQUE_NAME__.pub | ssh pi@192.168.1.2 'cat >> .ssh/authorized_keys'    # add the public key to the pihole
 #
+# echo 'IdentityFile ~/.ssh/__UNIQUE_NAME__' >> ~/.ssh/config                        # to instruct ssh to try multiple keys in succession when connecting ref. https://stackoverflow.com/questions/2419566/best-way-to-use-multiple-ssh-private-keys-on-one-client
+# 
 # test if it works:
 # ssh pi@192.168.1.2                                                                 # if it goes through without asking for password it works 
+#
+#
+#   source:
+#   https://www.tecmint.com/ssh-passwordless-login-using-ssh-keygen-in-5-easy-steps/
 
 homeassistant:
   customize:
