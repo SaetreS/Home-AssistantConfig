@@ -26,7 +26,6 @@ sun:
 #  username: !secret mqtt_username
 #  password: !secret mqtt_password
 
-#sensor: !include_dir_merge_list sensors
 
 zwave:
   usb_path: /dev/ttyAMA0
