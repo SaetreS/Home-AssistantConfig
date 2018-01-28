@@ -152,12 +152,10 @@ script:
     sequence:
       - service: shell_command.updateHA
         entity_id: script.update_ha      
-        
-        
+
 shell_command:
   rebootpi: ssh pi@192.168.1.156 sudo reboot
   rebootha: ssh pi@192.168.1.156 sudo systemctl restart home-assistant
   stopha: ssh pi@192.168.1.156 sudo systemctl stop home-assistant
   updatepi: ssh pi@192.168.1.156 sudo /home/homeassistant/.homeassistant/update_pi.sh
   updateha: ssh pi@192.168.1.156 sudo /home/homeassistant/.homeassistant/update_ha.sh
-

@@ -9,7 +9,23 @@
 # login to pihole
 # settings
 # under API press show API token then yes, show API token
-
+#
+#
+# Adding SSH access to pi hole
+# homeassistant ip: 192.168.1.156
+# homeassistant user: homeassistant
+# pihole ip: 192.168.1.2
+# pihole user: pi
+#
+# sudo su -s /bin/bash homeassistant                                                 # to login with homeassistant user
+# ssh-keygen -t rsa
+# /home/homeassistant/.ssh/__UNIQUE_NAME__                                           # if multiple ssh points is needed add unique name else enter
+# enter                                                                              # no password eases the HA connecting part
+# ssh pi@192.168.1.2 mkdir -p .ssh                                                   # login to the host ip address to create an .ssh folder to store the private key in
+# cat .ssh/__UNIQUE_NAME__.pub | ssh pi@192.168.1.2 'cat >> .ssh/authorized_keys'    # add the public key to the pihole
+#
+# test if it works:
+# ssh pi@192.168.1.2                                                                 # if it goes through without asking for password it works 
 
 homeassistant:
   customize:
@@ -64,3 +80,22 @@ group:
       - sensor.pihole_ads_percentage_today
       - sensor.pihole_ads_percentage_blocked_today
       - switch.disable_pihole
+      - script.update_pihole
+      - script.restart_pihole
+
+script:
+  update_pihole:
+    alias: Update PiHole
+    sequence:
+      - service: shell_command.updatepihole
+        entity_id: script.update_pihole               
+
+  restart_pihole:
+    alias: Restart PiHole
+    sequence:
+      - service: shell_command.rebootpihole
+        entity_id: script.restart_pihole
+        
+shell_command:
+  updatepihole: ssh pi@192.168.1.2 sudo /home/pi/update.sh
+  rebootpihole: ssh pi@192.168.1.2 sudo reboot
