@@ -43,9 +43,10 @@ group:
     - script.update_pi
 
   Home Assistant:
+    - sensor.home_assistant_uptime
     - sensor.home_assistant_installed_version
     - sensor.Home_Assistant_Latest_Version
-    - sensor.home_assistant_uptime
+    - script.update_ha
 
 sensor:
   - platform: systemmonitor
@@ -146,9 +147,17 @@ script:
       - service: shell_command.updatepi
         entity_id: script.update_pi
 
+  update_ha:
+    alias: Update Home Assistant
+    sequence:
+      - service: shell_command.updateHA
+        entity_id: script.update_ha      
+        
+        
 shell_command:
   rebootpi: ssh pi@192.168.1.156 sudo reboot
   rebootha: ssh pi@192.168.1.156 sudo systemctl restart home-assistant
   stopha: ssh pi@192.168.1.156 sudo systemctl stop home-assistant
   updatepi: ssh pi@192.168.1.156 sudo /home/homeassistant/.homeassistant/update_pi.sh
+  updateha: ssh pi@192.168.1.156 sudo /home/homeassistant/.homeassistant/update_ha.sh
 
