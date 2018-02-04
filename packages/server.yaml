@@ -1,0 +1,156 @@
+homeassistant:
+  customize:
+    sensor.server_time_since_last_system_update:
+      friendly_name: Time since last system update
+    sensor.server_CPU_used:
+      friendly_name: CPU used
+      unit_of_measurement: "%"
+    sensor.server_core0_temperature:
+      friendly_name: Core0 temperature
+      unit_of_measurement: "°C"
+    sensor.server_core1_temperature:
+      friendly_name: Core1 temperature
+      unit_of_measurement: "°C"
+    sensor.server_storage_used_disk:
+      friendly_name: Storage used disk
+      unit_of_measurement: "%"
+    sensor.server_system_used_disk:
+      friendly_name: System used disk
+      unit_of_measurement: "%"
+    sensor.server_memory_usage:
+      friendly_name: RAM usage
+      unit_of_measurement: "%"
+      
+group:
+  server:
+    entities:
+      - sensor.server_core0_temperature
+      - sensor.server_core1_temperature
+      - sensor.server_cpu_used
+      - sensor.server_system_used_disk
+      - sensor.server_storage_used_disk
+      - sensor.server_memory_usage
+      - sensor.server_time_since_last_system_update
+      - script.update_server
+      - script.restart_server
+      
+sensor:
+  - platform: command_line
+    command: !secret server_core0_temp
+    value_template: '{{ value | multiply(0.001) | round(2) }}'
+    name: "Server Core0 temperature"
+    scan_interval: 600
+
+  - platform: command_line
+    command: !secret server_core1_temp
+    value_template: '{{ value | multiply(0.001) | round(2) }}'
+    name: "Server Core1 temperature"
+    scan_interval: 600
+
+  - platform: command_line
+    name: Server Time since last system update
+    command: !secret server_time_since_last_system_update
+    scan_interval: 3600
+    value_template: >-
+      {% set uptime = value | int %}
+      {% set seconds = uptime % 60 %}
+      {% set minutes = ((uptime % 3600) / 60) | int %}
+      {% set hours = ((uptime % 86400) / 3600) | int %}
+      {% set days = (uptime / 86400) | int %}
+      {%- if days > 0 -%}
+        {%- if days == 1 -%}
+          1 day
+        {%- else -%}
+          {{ days }} days
+        {%- endif -%}
+        {{ ', ' }}
+      {%- endif -%}
+      {{ '%02d' % hours }}:{{ '%02d' % minutes }}    
+    
+  - platform: command_line
+    command: !secret server_cpu_usage
+    name: server CPU used
+    scan_interval: 300
+
+  - platform: command_line
+    command: !secret  server_storage_used_disk
+    name: Server storage used disk
+    scan_interval: 3600
+    
+  - platform: command_line
+    command: !secret  server_system_used_disk
+    name: Server system used disk
+    scan_interval: 3600
+ 
+  - platform: command_line
+    command: !secret  server_memory_usage
+    value_template: '{{ value | round(1) }}'
+    name: Server memory usage
+    scan_interval: 300
+    
+script:
+  update_server:
+    alias: Update Server
+    sequence:
+      - service: shell_command.updateserver
+        entity_id: script.update_server           
+
+  restart_server:
+    alias: Restart Server
+    sequence:
+      - service: shell_command.rebootserver
+        entity_id: script.restart_server
+
+  check_stock_dl:
+    alias: Check Stock Data
+    sequence:
+      - service: shell_command.checkstockdl
+        entity_id: script.check_stock_dl       
+
+shell_command:
+  rebootserver: !secret server_reboot
+  updateserver: !secret server_update
+  checkstockdl: !secret server_stock_data_dl
+
+automation:
+  - alias: Aksjenedlasting
+    trigger:
+      - platform: time
+        at: '20:00:00'
+      - platform: state
+        entity_id: script.check_stock_dl
+        to: '0'
+    condition:
+      condition: time
+      weekday:
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
+    action:
+      service: notify.ALARM_LIST
+      data:
+        message: "Alarm - ingen nedlasting av aksjedata"
+        data:
+          push:
+            badge: 5
+            category: 'alarm'
+
+  - alias: Server cpu temperatur
+    trigger:
+      platform: numeric_state
+      entity_id: 
+        - sensor.server_core0_temperature
+        - sensor.server_core1_temperature
+      value_template: '{{ float(state.state) }}'
+      above: 65
+    action:
+      service: notify.ALARM_LIST
+      data:
+        message: "Alarm - Høy Server temperatur"
+        data:
+          push:
+            badge: 5
+            category: 'alarm'
+            

@@ -47,6 +47,8 @@ group:
       - automation.brannalarm
       - automation.zec_mining
       - automation.aeon_mining
+      - automation.aksjenedlasting
+      - automation.server_cpu_temperatur
 
   vacuum:
     name: Stovsuger

@@ -22,6 +22,7 @@ group:
       - group.system
       - group.home_assistant
       - group.pihole
+      - group.server
 
   Internet Status:
     - sensor.speedtest_ping
@@ -159,3 +160,4 @@ shell_command:
   stopha: ssh pi@192.168.1.156 sudo systemctl stop home-assistant
   updatepi: ssh pi@192.168.1.156 sudo /home/homeassistant/.homeassistant/update_pi.sh
   updateha: ssh pi@192.168.1.156 sudo /home/homeassistant/.homeassistant/update_ha.sh
+  
