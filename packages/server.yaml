@@ -87,6 +87,11 @@ sensor:
     value_template: '{{ value | round(1) }}'
     name: Server memory usage
     scan_interval: 300
+
+  - platform: command_line
+    command: !secret server_stock_data_dl
+    name: stock dl
+    scan_interval: 3600
     
 script:
   update_server:
@@ -101,33 +106,29 @@ script:
       - service: shell_command.rebootserver
         entity_id: script.restart_server
 
-  check_stock_dl:
-    alias: Check Stock Data
-    sequence:
-      - service: shell_command.checkstockdl
-        entity_id: script.check_stock_dl       
-
 shell_command:
   rebootserver: !secret server_reboot
   updateserver: !secret server_update
-  checkstockdl: !secret server_stock_data_dl
 
 automation:
   - alias: Aksjenedlasting
     trigger:
-      - platform: time
-        at: '20:00:00'
-      - platform: state
-        entity_id: script.check_stock_dl
-        to: '0'
+      platform: time
+      at: '21:00:00'
     condition:
-      condition: time
-      weekday:
-        - mon
-        - tue
-        - wed
-        - thu
-        - fri
+      condition: and     
+      conditions:
+        - condition: time
+          weekday:
+          - mon
+          - tue
+          - wed
+          - thu
+          - fri
+        - condition: state
+          entity_id: sensor.stock_dl
+#          state: "download ok"
+          state: "not downloaded"
     action:
       service: notify.ALARM_LIST
       data:
