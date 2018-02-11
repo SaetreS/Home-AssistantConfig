@@ -8,13 +8,9 @@
 !.travis.yml
 !update_ha.sh
 !update_pi.sh
-
 secrets.yaml
 known_devices.yaml
 entity_registry.yaml
 groups.yaml
-
 yr_location_comparison.py
 __init__.py
-
-
