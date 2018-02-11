@@ -11,6 +11,15 @@
 # https://github.com/samabsalom/Home-Assistant-Config/blob/master/packages/rebootpi.yaml
 # https://community.home-assistant.io/t/reboot-pi-with-script/5130/20
 
+homeassistant:
+  customize:
+    sensor.processor_use:
+      friendly_name: CPU used
+    sensor.disk_use_percent_home:
+      friendly_name: Home used disk
+    sensor.memory_use_percent:
+      friendly_name: RAM usage
+
 
 group:
   system_overview:
@@ -31,13 +40,10 @@ group:
 
   System:
     - sensor.pi_temperature
-    - sensor.cpu_used
-    - sensor.disk_used_home
-    - sensor.ram_available
-    - sensor.received_eth0
-    - sensor.sent_eth0
+    - sensor.processor_use
+    - sensor.disk_use_percent_home
+    - sensor.memory_use_percent
     - sensor.last_boot
-    - sensor.ipv4_address_eth0
     - sensor.time_since_last_system_update
     - script.update_pi
     - script.restart_pi
@@ -49,21 +55,15 @@ group:
     - script.update_ha
     - script.restart_ha
 
+
 sensor:
   - platform: systemmonitor
     resources:
       - type: disk_use_percent
         arg: /home
-      - type: memory_free
+      - type: memory_use_percent
       - type: processor_use
-      - type: network_in
-        arg: eth0
-      - type: network_out
-        arg: eth0
       - type: last_boot
-      - type: disk_free
-      - type: ipv4_address
-        arg: eth0
 
   - platform: command_line
     command: "cat /sys/class/thermal/thermal_zone0/temp"
@@ -127,6 +127,7 @@ sensor:
     command: python3 -c "import requests; print(requests.get('https://pypi.python.org/pypi/homeassistant/json').json()['info']['version'])"
     name: Home Assistant Latest Version
     scan_interval: 86400
+
     
 script:
   restart_ha:
@@ -153,6 +154,7 @@ script:
     sequence:
       - service: shell_command.updateHA
         entity_id: script.update_ha      
+
 
 shell_command:
   rebootpi: ssh pi@192.168.1.156 sudo reboot

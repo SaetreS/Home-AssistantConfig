@@ -1,0 +1,33 @@
+sensor.stians_ipad_battery_level:
+  platform: ios
+  unique_id: level_stians_ipad
+sensor.iphone_stian_battery_state:
+  platform: ios
+  unique_id: state_iphone_stian
+sensor.iphone_stian_battery_level:
+  platform: ios
+  unique_id: level_iphone_stian
+sensor.stians_ipad_battery_state:
+  platform: ios
+  unique_id: state_stians_ipad
+binary_sensor.fibaro_system_fgsd002_smoke_sensor_sensor:
+  platform: zwave
+  unique_id: 2-72057594076463104
+sensor.fibaro_system_fgsd002_smoke_sensor_temperature:
+  platform: zwave
+  unique_id: 2-72057594076479506
+sensor.fibaro_system_fgsd002_smoke_sensor_alarm_type:
+  platform: zwave
+  unique_id: 2-72057594077528065
+sensor.fibaro_system_fgsd002_smoke_sensor_alarm_level:
+  platform: zwave
+  unique_id: 2-72057594077528081
+sensor.fibaro_system_fgsd002_smoke_sensor_general:
+  platform: zwave
+  unique_id: 2-72057594078232577
+sensor.fibaro_system_fgsd002_smoke_sensor_smoke:
+  platform: zwave
+  unique_id: 2-72057594078232593
+sensor.fibaro_system_fgsd002_smoke_sensor_heat:
+  platform: zwave
+  unique_id: 2-72057594078232641
