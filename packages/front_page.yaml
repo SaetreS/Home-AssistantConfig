@@ -4,6 +4,8 @@ group:
     icon: mdi:home
     entities:
       - group.temperaturer
+      - group.Luftfuktighet
+      - group.magnetsensorer
       - group.batteri
       - group.brannalarm
       - group.alarm
@@ -13,10 +15,22 @@ group:
     name: Temperatur
     entities:
       - sensor.dht_sensor_temperature
-#    - sensor.dht_sensor_humidity
-#    - sensor.temperature
-#    - sensor.humidity
       - sensor.fibaro_system_fgsd002_smoke_sensor_temperature
+      - sensor.temperature_158d0001e42477
+      - sensor.temperature_158d0001ab296f
+      
+  Luftfuktighet:
+    name: Luftfuktighet
+    entities:
+      - sensor.dht_sensor_humidity
+      - sensor.humidity_158d0001e42477
+      - sensor.humidity_158d0001ab296f
+  
+  magnetsensorer:
+    name: Magnetsensorer
+    entities:
+      - binary_sensor.door_window_sensor_158d00019f50b8
+      - binary_sensor.door_window_sensor_158d0001a985cc
 
   batteri:
     name: Batteri status
@@ -45,10 +59,13 @@ group:
     name: Alarms
     entities:
       - automation.brannalarm
+      - automation.Hoveddor_alarm
+      - automation.Vindu_alarm
       - automation.zec_mining
       - automation.aeon_mining
       - automation.aksjenedlasting
       - automation.server_cpu_temperatur
+
 
   vacuum:
     name: Stovsuger
@@ -110,7 +127,11 @@ vacuum:
   - platform: xiaomi_miio
     host: !secret vacuum_host
     token: !secret vacuum_token
-          
+
+xiaomi_aqara:
+  discovery_retry: 5
+  gateways:
+    - key: !secret gateway_key    
           
 homeassistant:
     customize:
@@ -125,19 +146,37 @@ homeassistant:
       sensor.stians_ipad_battery_level:
         friendly_name: Ipad
       sensor.vacuum_battery:
-        friendly_name: Stovsuger
+        friendly_name: Støvsuger
       sensor.vacuum_status:
         friendly_name: Status
       sensor.vacuum_main_brush_left:
-        friendly_name: Hovedborste - tid til bytte
+        friendly_name: Hovedbørste - tid til bytte
         unit_of_measurement: h
       sensor.vacuum_side_brush_left:
-        friendly_name: Sideborste - tid til bytte
+        friendly_name: Sidebørste - tid til bytte
         unit_of_measurement: h
       sensor.vacuum_filter_left:
         friendly_name: Filter - tid til bytte
         unit_of_measurement: h
-
+      sensor.temperature_158d0001e42477:
+        friendly_name: Soverom Temperatur
+      sensor.pressure_158d0001e42477:
+        friendly_name: Soverom Trykk
+      sensor.humidity_158d0001e42477:
+        friendly_name: Soverom Luftfuktighet
+      sensor.illumination_34ce00fa7cf0:
+        friendly_name: stue lysstyrke
+      sensor.temperature_158d0001ab296f:
+        friendly_name: Gang Temperatur
+      sensor.pressure_158d0001ab296f:
+        friendly_name: Gang Trykk
+      sensor.humidity_158d0001ab296f:
+        friendly_name: Gang Luftfuktighet
+      binary_sensor.door_window_sensor_158d00019f50b8:
+        friendly_name: Hoveddør
+      binary_sensor.door_window_sensor_158d0001a985cc:
+        friendly_name: Vindu
+      
 
         
 automation:
@@ -156,7 +195,8 @@ automation:
           push:
             badge: 5
             category: 'alarm'
-  - alias: Automatisk stovsuging
+
+  - alias: Automatisk støvsuging
     trigger:
       - platform: state
         entity_id: device_tracker.iphone_stian
@@ -176,4 +216,34 @@ automation:
     action:
       - service: homeassistant.turn_on
         entity_id: vacuum.xiaomi_vacuum_cleaner
+
+  - alias: Hoveddor alarm
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.door_window_sensor_158d00019f50b8
+        from: 'off'
+        to: 'on'
+    action:
+      service: notify.ALARM_LIST
+      data:
+        message: "Alarm - Hoveddør"
+        data:
+          push:
+            badge: 5
+            category: 'alarm'
+
+  - alias: Vindu alarm
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.door_window_sensor_158d0001a985cc
+        from: 'off'
+        to: 'on'
+    action:
+      service: notify.ALARM_LIST
+      data:
+        message: "Alarm - Vindu"
+        data:
+          push:
+            badge: 5
+            category: 'alarm'            
         
