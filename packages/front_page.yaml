@@ -16,21 +16,27 @@ group:
     entities:
       - sensor.dht_sensor_temperature
       - sensor.fibaro_system_fgsd002_smoke_sensor_temperature
-      - sensor.temperature_158d0001e42477
-      - sensor.temperature_158d0001ab296f
+      - sensor.gang
+      - sensor.soverom
+#      - sensor.temperature_158d0001e42477
+#      - sensor.temperature_158d0001ab296f
+
       
   Luftfuktighet:
     name: Luftfuktighet
     entities:
       - sensor.dht_sensor_humidity
-      - sensor.humidity_158d0001e42477
-      - sensor.humidity_158d0001ab296f
+      - sensor.gang_2
+      - sensor.soverom_3
+#      - sensor.humidity_158d0001e42477
+#      - sensor.humidity_158d0001ab296f
   
   magnetsensorer:
     name: Magnetsensorer
     entities:
-      - binary_sensor.door_window_sensor_158d00019f50b8
-      - binary_sensor.door_window_sensor_158d0001a985cc
+      - binary_sensor.dor
+#      - binary_sensor.door_window_sensor_158d00019f50b8
+#      - binary_sensor.door_window_sensor_158d0001a985cc
 
   batteri:
     name: Batteri status
@@ -128,10 +134,10 @@ vacuum:
     host: !secret vacuum_host
     token: !secret vacuum_token
 
-xiaomi_aqara:
-  discovery_retry: 5
-  gateways:
-    - key: !secret gateway_key    
+#xiaomi_aqara:
+#  discovery_retry: 5
+#  gateways:
+#    - key: !secret gateway_key    
           
 homeassistant:
     customize:
@@ -158,24 +164,24 @@ homeassistant:
       sensor.vacuum_filter_left:
         friendly_name: Filter - tid til bytte
         unit_of_measurement: h
-      sensor.temperature_158d0001e42477:
-        friendly_name: Soverom Temperatur
-      sensor.pressure_158d0001e42477:
-        friendly_name: Soverom Trykk
-      sensor.humidity_158d0001e42477:
-        friendly_name: Soverom Luftfuktighet
-      sensor.illumination_34ce00fa7cf0:
-        friendly_name: stue lysstyrke
-      sensor.temperature_158d0001ab296f:
-        friendly_name: Gang Temperatur
-      sensor.pressure_158d0001ab296f:
-        friendly_name: Gang Trykk
-      sensor.humidity_158d0001ab296f:
-        friendly_name: Gang Luftfuktighet
-      binary_sensor.door_window_sensor_158d00019f50b8:
-        friendly_name: Hoveddør
-      binary_sensor.door_window_sensor_158d0001a985cc:
-        friendly_name: Vindu
+#      sensor.temperature_158d0001e42477:
+#        friendly_name: Soverom Temperatur
+#      sensor.pressure_158d0001e42477:
+#        friendly_name: Soverom Trykk
+#      sensor.humidity_158d0001e42477:
+#        friendly_name: Soverom Luftfuktighet
+#      sensor.illumination_34ce00fa7cf0:
+#        friendly_name: stue lysstyrke
+#      sensor.temperature_158d0001ab296f:
+#        friendly_name: Gang Temperatur
+#      sensor.pressure_158d0001ab296f:
+#        friendly_name: Gang Trykk
+#      sensor.humidity_158d0001ab296f:
+#        friendly_name: Gang Luftfuktighet
+#      binary_sensor.door_window_sensor_158d00019f50b8:
+#        friendly_name: Hoveddør
+#      binary_sensor.door_window_sensor_158d0001a985cc:
+#        friendly_name: Vindu
       
 
         
@@ -220,7 +226,7 @@ automation:
   - alias: Hoveddor alarm
     trigger:
       - platform: state
-        entity_id: binary_sensor.door_window_sensor_158d00019f50b8
+        entity_id: binary_sensor.dor
         from: 'off'
         to: 'on'
     action:
@@ -232,18 +238,18 @@ automation:
             badge: 5
             category: 'alarm'
 
-  - alias: Vindu alarm
-    trigger:
-      - platform: state
-        entity_id: binary_sensor.door_window_sensor_158d0001a985cc
-        from: 'off'
-        to: 'on'
-    action:
-      service: notify.ALARM_LIST
-      data:
-        message: "Alarm - Vindu"
-        data:
-          push:
-            badge: 5
-            category: 'alarm'            
+#  - alias: Vindu alarm
+#    trigger:
+#      - platform: state
+#        entity_id: binary_sensor.door_window_sensor_158d0001a985cc
+#        from: 'off'
+#        to: 'on'
+#    action:
+#      service: notify.ALARM_LIST
+#      data:
+#        message: "Alarm - Vindu"
+#        data:
+#          push:
+#            badge: 5
+#            category: 'alarm'            
         

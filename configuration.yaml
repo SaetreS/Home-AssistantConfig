@@ -42,6 +42,11 @@ device_tracker:
   # sudo setcap cap_net_raw,cap_net_admin,cap_net_bind_service+eip /usr/bin/nmap   
 
 
+deconz:
+  host: 127.0.0.1
+  api_key: !secret decons_api_key
+  port: 80
+  
 sensor:
   - platform: plex
 
