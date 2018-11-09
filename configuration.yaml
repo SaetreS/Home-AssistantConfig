@@ -97,3 +97,18 @@ recorder:
       - sun
       - switch
       - script
+
+ffmpeg:
+  ffmpeg_bin: /usr/bin/avconv      
+     
+camera 1:
+  - platform: generic
+    name: Weather forecast Oslo
+    still_image_url: https://www.yr.no/place/Norway/Oslo/Oslo/Oslo/meteogram.svg
+    content_type: 'image/svg+xml'
+
+camera 2:
+  - platform: ffmpeg
+    name: DaFang
+#    input: -rtsp_transport tcp -i rtsp://192.168.1.67:8554/unicast
+    input: -rtsp_transport tcp -i rtsp://192.168.1.67:8554/unicast

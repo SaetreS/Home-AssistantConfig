@@ -1,0 +1,11 @@
+group:
+  cameras:
+    name: CameraFeed
+    icon: mdi:camcorder
+    view: yes
+    entities:
+      - group.camera_all
+
+  camera_all:
+    - camera.dafang
+ 

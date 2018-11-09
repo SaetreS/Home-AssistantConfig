@@ -18,6 +18,7 @@ group:
       - sensor.fibaro_system_fgsd002_smoke_sensor_temperature
       - sensor.gang
       - sensor.soverom
+      - sensor.bad_3
 #      - sensor.temperature_158d0001e42477
 #      - sensor.temperature_158d0001ab296f
 
@@ -28,6 +29,7 @@ group:
       - sensor.dht_sensor_humidity
       - sensor.gang_2
       - sensor.soverom_3
+      - sensor.bad
 #      - sensor.humidity_158d0001e42477
 #      - sensor.humidity_158d0001ab296f
   
@@ -71,7 +73,7 @@ group:
       - automation.aeon_mining
       - automation.aksjenedlasting
       - automation.server_cpu_temperatur
-
+      - automation.vannlekkasje_kjkken
 
   vacuum:
     name: Stovsuger
@@ -238,6 +240,23 @@ automation:
             badge: 5
             category: 'alarm'
 
+  - alias: Vannlekkasje kjøkken
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.lumisensor_wleakaq1
+        from: 'off'
+        to: 'on'
+    action:
+      service: notify.ALARM_LIST
+      data:
+        message: "Alarm - Vannlekkasje kjøkken"
+        data:
+          push:
+            badge: 5
+            category: 'alarm'
+        
+            
+            
 #  - alias: Vindu alarm
 #    trigger:
 #      - platform: state

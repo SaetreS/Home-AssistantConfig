@@ -69,8 +69,3 @@ sensor:
       - highClouds
       - dewpointTemperature
 
-camera:
-  - platform: generic
-    name: Weather forecast Oslo
-    still_image_url: https://www.yr.no/place/Norway/Oslo/Oslo/Oslo/meteogram.svg
-    content_type: 'image/svg+xml'
