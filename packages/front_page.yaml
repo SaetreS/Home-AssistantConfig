@@ -37,8 +37,7 @@ group:
     name: Magnetsensorer
     entities:
       - binary_sensor.dor
-#      - binary_sensor.door_window_sensor_158d00019f50b8
-#      - binary_sensor.door_window_sensor_158d0001a985cc
+      - binary_sensor.vindu
 
   batteri:
     name: Batteri status
@@ -255,20 +254,18 @@ automation:
             badge: 5
             category: 'alarm'
         
-            
-            
-#  - alias: Vindu alarm
-#    trigger:
-#      - platform: state
-#        entity_id: binary_sensor.door_window_sensor_158d0001a985cc
-#        from: 'off'
-#        to: 'on'
-#    action:
-#      service: notify.ALARM_LIST
-#      data:
-#        message: "Alarm - Vindu"
-#        data:
-#          push:
-#            badge: 5
-#            category: 'alarm'            
+  - alias: Vindu alarm
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.vindu
+        from: 'off'
+        to: 'on'
+    action:
+      service: notify.ALARM_LIST
+      data:
+        message: "Alarm - Vindu"
+        data:
+          push:
+            badge: 5
+            category: 'alarm'            
         
